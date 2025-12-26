@@ -26,6 +26,21 @@ const HomePage = () => {
         >
             Fetch data
         </button>
+
+        <button
+                className="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition-all"
+                onClick={() => navigate("/post")} 
+            >
+                Quản lý Post
+        </button>
+
+        <button
+                className="px-6 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition-all"
+                onClick={() => navigate("/user")}
+            >
+                Quản lý Admin User
+        </button>
+
                         
     </>
     );
