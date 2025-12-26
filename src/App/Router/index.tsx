@@ -7,17 +7,37 @@ import { ProtectedRoute } from "../ProtectedRoute";
 
 export const AppRoutes = () => {
   return (
-    <ProtectedRoute>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<LoginPage />} />
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/login" element={<LoginPage />} />
 
-        <Route path="/" element={<HomePage />} />
-        <Route path="/user" element={<UserPage />} />
-        <Route path="/post" element={<PostPage />} />
+      {/* Protected Routes */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/user"
+        element={
+          <ProtectedRoute>
+            <UserPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/post"
+        element={
+          <ProtectedRoute>
+            <PostPage />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route path="*" element={<LoginPage />} />
-      </Routes>
-    </ProtectedRoute>
+      <Route path="*" element={<LoginPage />} />
+    </Routes>
   );
 };
