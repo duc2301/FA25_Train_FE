@@ -25,10 +25,14 @@ export const PostService = {
         return data.message; 
     },
 
-    // 4. PUT: /api/Posts/PostUpdate{id}
     updatePost: async (id: string, content: string, privacyLevel: string) => {
-        const payload = { content, privacyLevel };
-        const response = await api.put(`Posts/PostUpdate${id}`, payload);
+        const payload = { 
+            postId: id, 
+            content: content, 
+            privacyLevel: privacyLevel 
+        };
+
+        const response = await api.put(`Posts/PostUpdate${id}`, payload);  
         const data: ApiResponse<null> = response.data;
         return data.isSuccess;
     },
