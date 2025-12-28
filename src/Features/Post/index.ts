@@ -22,9 +22,10 @@ export const PostService = {
     const payload = { userId, content, privacyLevel };
     const response = await api.post("Posts/PostCreate", payload);
     const data: ApiResponse<null> = response.data;
-    return data.message;
+    return data.isSuccess;
   },
 
+  // 4. PUT: /api/Posts/PostUpdate{id}
   updatePost: async (id: string, content: string, privacyLevel: string) => {
     const payload = {
       postId: id,

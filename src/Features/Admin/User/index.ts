@@ -21,7 +21,7 @@ export const AdminService = {
   createUser: async (userData: any) => {
     const response = await api.post("admin/AdminUser/UserCreate", userData);
     const data: ApiResponse<null> = response.data;
-    return data.message;
+    return data.isSuccess;
   },
 
   // 4. PUT: /api/admin/AdminUser/UserUpdate
