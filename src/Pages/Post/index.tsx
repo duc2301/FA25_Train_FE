@@ -18,7 +18,6 @@ const PostPage = () => {
   );
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Helper function to get privacy badge class
   const getPrivacyBadgeClass = (level: string) => {
     if (level === "Public")
       return "px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800";
@@ -48,6 +47,23 @@ const PostPage = () => {
     fetchData();
   }, []);
 
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setContent("");
+    setPrivacy("Public");
+    if (users.length > 0) setSelectedUserId(users[0].userId);
+    message.info("Đã hủy chỉnh sửa, quay lại chế độ tạo mới.");
+  };
+
+  const handleStartEdit = (post: Post) => {
+    setEditingId(post.postId);
+    setContent(post.content || "");
+    setPrivacy(post.privacyLevel);
+    setSelectedUserId(post.userId);
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingId) {
@@ -68,11 +84,11 @@ const PostPage = () => {
       );
       if (success) {
         message.success("Tạo bài viết thành công!");
+        setContent("");
+        fetchData();
       } else {
         message.error("Tạo bài viết thất bại");
       }
-      setContent("");
-      fetchData();
     }
   };
 
@@ -81,6 +97,7 @@ const PostPage = () => {
       const success = await PostService.deletePost(id);
       if (success) {
         message.success("Xóa bài viết thành công!");
+        if (editingId === id) handleCancelEdit();
         fetchData();
       } else {
         message.error("Xóa bài viết thất bại");
@@ -110,12 +127,27 @@ const PostPage = () => {
             {/* FORM */}
             <form
               onSubmit={handleSubmit}
-              className="mb-8 p-8 bg-white rounded-xl shadow-lg border-2 border-blue-200"
+              className={`mb-8 p-8 bg-white rounded-xl shadow-lg border-2 ${
+                editingId ? "border-yellow-400" : "border-blue-200"
+              }`}
             >
-              <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                <span className="text-2xl">✎</span>{" "}
-                {editingId ? "Chỉnh sửa bài viết" : "Tạo bài viết mới"}
-              </h2>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className={`text-xl font-bold flex items-center gap-2 ${editingId ? "text-yellow-600" : "text-gray-800"}`}>
+                  <span className="text-2xl">{editingId ? "📝" : "✎"}</span>{" "}
+                  {editingId ? "Chỉnh sửa bài viết" : "Tạo bài viết mới"}
+                </h2>
+                
+                {/* Nút hủy edit ở góc trên phải form (tùy chọn thêm) */}
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className="text-sm text-gray-500 hover:text-red-500 underline"
+                  >
+                    Hủy bỏ & Quay lại tạo mới
+                  </button>
+                )}
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {/* Ô chọn User ID */}
@@ -167,12 +199,34 @@ const PostPage = () => {
                 onChange={(e) => setContent(e.target.value)}
                 required
               />
-              <button
-                type="submit"
-                className="w-full bg-linear-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-bold hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
-              >
-                {editingId ? "✓ Cập nhật bài viết" : "+ Đăng bài ngay"}
-              </button>
+              
+              {/* KHU VỰC NÚT BẤM ĐƯỢC TÁCH RIÊNG */}
+              <div className="flex gap-3">
+                {editingId ? (
+                  <>
+                    <button
+                      type="submit"
+                      className="flex-1 bg-yellow-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-yellow-600 hover:shadow-lg transition-all"
+                    >
+                      ✓ Lưu thay đổi
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCancelEdit}
+                      className="flex-none bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-bold hover:bg-gray-300 transition-all"
+                    >
+                      ✗ Hủy bỏ
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="submit"
+                    className="w-full bg-linear-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-bold hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+                  >
+                    + Đăng bài ngay
+                  </button>
+                )}
+              </div>
             </form>
 
             {/* BẢNG DANH SÁCH */}
@@ -225,11 +279,7 @@ const PostPage = () => {
                         <td className="px-6 py-4 text-center">
                           <div className="flex gap-2 justify-center">
                             <button
-                              onClick={() => {
-                                setEditingId(post.postId);
-                                setContent(post.content || "");
-                                setPrivacy(post.privacyLevel);
-                              }}
+                              onClick={() => handleStartEdit(post)}
                               className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition-colors text-sm"
                             >
                               ✎ Sửa

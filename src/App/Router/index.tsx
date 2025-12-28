@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import HomePage from "../../Pages/Home";
 import LoginPage from "../../Pages/Login";
 import PostPage from "../../Pages/Post";
-import UserPage from "../../Pages/User";
+import AdminUserPage from "../../Pages/Admin/User";
 import { ProtectedRoute } from "../ProtectedRoute";
 
 export const AppRoutes = () => {
@@ -21,10 +21,10 @@ export const AppRoutes = () => {
         }
       />
       <Route
-        path="/user"
+        path="/admin/user"
         element={
           <ProtectedRoute>
-            <UserPage />
+            <AdminUserPage />
           </ProtectedRoute>
         }
       />
